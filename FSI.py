@@ -1,7 +1,9 @@
+from fileinput import filename
 from tkinter import *
 from tkinter import ttk
-### from PIL import ImageTk, Image
-from tkinter.filedialog import *
+import tkinter
+from PIL import ImageTk, Image
+from tkinter import filedialog as fd
 
 ### creates the program
 root = Tk()  ### naming the variable and creates a Tk class
@@ -15,6 +17,7 @@ screen_width = root.winfo_screenwidth()
 
 ### makes this full screen
 root.geometry("%dx%d" % (screen_width, screen_height))
+root.resizable(screen_width, screen_height)
 
 ### widgets!
 content = ttk.Frame(root)
@@ -33,21 +36,15 @@ draw_button.grid(row=2, column=0)
 erase_button.grid(row=3, column=0)
 
     ### frames where I want the IR images to go
-top_frame = ttk.Frame(content, borderwidth=5, relief="ridge", width=1000, height=360)
-top_frame.grid(column = 2, row = 0, columnspan=3, rowspan=8)
+top_frame = ttk.Labelframe(content, borderwidth=5, relief="ridge", width=1000, height=330, text='Known Spectra')
+top_frame.grid(column = 2, row =0, columnspan=3, rowspan=8)
 
-bottom_frame = ttk.Frame(content, borderwidth=5, relief="ridge", width=1000, height=360)
-bottom_frame.grid(column = 2, row=9, columnspan=3, rowspan=8)
+bottom_frame = ttk.Labelframe(content, borderwidth=5, relief="ridge", width=1000, height=330, text='Unknown Spectra') #360)
+bottom_frame.grid(column = 2, row=8, columnspan=3, rowspan=8)
 
     ### frames for additional spectra
-ir_spec1 = ttk.Frame(content, borderwidth=5, relief='ridge', width=170, height=120)
+ir_spec1 = ttk.Labelframe(content, borderwidth=5, relief='ridge', width=170, height=120, text='More')
 ir_spec1.grid(column=9, row=0, rowspan=3)
-
-def open_file():
-    file = askopenfile(mode ='r', filetypes =[('Images', '*.jpg')])
-    if file is not None:
-        content = file.read()
-        print(content)
 
 ### creating a menu? 
 menubar = Menu(root, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
@@ -56,10 +53,10 @@ file = Menu(menubar, tearoff=0)
 file.add_command(label='New')
 file.add_command(label='Save')
 
-### idk how to make it open the files #####
-### file.add_command(label='Open', Button(menubar, command=open_file()))
-### file.add_command(label='Exit')
-### menubar.add_cascade(label='File', menu=file)
+### the command opens a file opening menu, but idk how to get it to put the image in the frame
+file.add_command(label='Open', command= fd.askopenfile(mode='r', type="*"))
+file.add_command(label='Exit')
+menubar.add_cascade(label='File', menu=file)
 
 
 ### edit menu options
