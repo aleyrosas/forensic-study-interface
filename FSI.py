@@ -18,7 +18,7 @@ screen_width = root.winfo_screenwidth()
 
 ### makes this full screen
 root.geometry("%dx%d" % (screen_width, screen_height))
-root.resizable(screen_width, screen_height)
+root.resizable(False, False)
 
 ### setups of the drawing feature so that the button is OFF initially
 is_draw_enable = FALSE
@@ -30,22 +30,53 @@ is_draw_enable = FALSE
 ### opening a file on the top canvas
 def open_topimage():
     global my_image
+    global img
     root.filename = fd.askopenfilename(initialdir='c:', title='Select a File', type='*.png')
     ### opens the image
-    my_image = ImageTk.PhotoImage(Image.open(root.filename))
+    img = Image.open(root.filename)
+    ### default scale value...
+    resize_ratio = 1
+
+    ### image dimenisions check for scaling...
+    if img.height > (330):
+        resize_ratio = (img.height/(330))
+    else:
+        if img.width > (root.winfo_screenwidth() - 200):
+            resize_ratio = (img.width/(root.winfo_screenwidth() - 200))
+
+    ### resize image...
+    img = img.resize((int(img.width/resize_ratio),int(img.height/resize_ratio)), Image.ANTIALIAS)
+    my_image = ImageTk.PhotoImage(img)
+
     my_image_label = Label(image=my_image)
     #my_image_label.grid(column=2, row=0)
-    my_canvas.create_image(0,0, image=my_image)
+    ### create image at center of canvas...
+    my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
 
 ### adds image to the bottom canvas
 def open_bottomimage():
     global my_secimage
+    global sec_img
     root.filename = fd.askopenfilename(initialdir='c:', title='Select a File', type='*.png')
     ### opens the image
-    my_secimage = ImageTk.PhotoImage(Image.open(root.filename))
+    sec_img = Image.open(root.filename)
+    ### default scale value...
+    resize_ratio = 1
+
+    ### image dimenisions check for scaling...
+    if sec_img.height > (330):
+        resize_ratio = (sec_img.height/(330))
+    else:
+        if sec_img.width > (root.winfo_screenwidth() - 200):
+            resize_ratio = (sec_img.width/(root.winfo_screenwidth() - 200))
+
+    ### resize image...
+    sec_img = sec_img.resize((int(sec_img.width/resize_ratio),int(sec_img.height/resize_ratio)), Image.ANTIALIAS)
+    my_secimage = ImageTk.PhotoImage(sec_img)
+
     my_secimage_label = Label(image=my_secimage)
     #my_image_label.grid(column=2, row=0)
-    sec_canvas.create_image(0,0, image=my_secimage)
+    sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
 
 ### drawing function!!!!!!!!
 def paint(event):
@@ -64,6 +95,13 @@ def toggle_draw():
     else:
         is_draw_enable = FALSE
 
+### This function works but it loses resolution and is generally bad...
+def zoom():
+    global my_image
+    global img
+    img = img.resize((int(img.width * 2), int(img.height*2)), Image.ANTIALIAS)
+    my_image = ImageTk.PhotoImage(img)
+    my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
 
 
 
@@ -75,7 +113,7 @@ content.grid(column = 0, row = 0)
 ### figure out how to turn it back on
 draw_button = ttk.Button(content, text = "Draw", command=toggle_draw)
 draw_button.grid(row=3, column=0)
-z_inButton = ttk.Button(content, text="Zoom In")
+z_inButton = ttk.Button(content, text="Zoom In", command=zoom)
 z_inButton.grid(row=1, column=0)
 z_outButton = ttk.Button(content, text="Zoom Out")
 z_outButton.grid(row=2, column=0)
@@ -125,11 +163,11 @@ root.config(menu=menubar)
 
 ### CANVASES
 ### for unknown spectra!
-my_canvas = tkinter.Canvas(content, bg='white', height=330, width=1000)
+my_canvas = tkinter.Canvas(content, bg='white', height=330, width=(root.winfo_screenwidth() - 200))
 my_canvas.grid(column=2, row=0, columnspan=3, rowspan=10)
 
 ### for known spectra!
-sec_canvas = tkinter.Canvas(content, bg='white', height=330, width=1000)
+sec_canvas = tkinter.Canvas(content, bg='white', height=330, width=(root.winfo_screenwidth() - 200))
 sec_canvas.grid(column=2, row=11, columnspan=3, rowspan=10)
 
 
