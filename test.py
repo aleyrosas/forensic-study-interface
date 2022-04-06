@@ -40,6 +40,10 @@ erase_button.grid(row=4, column=0)
 #top_frame = ttk.Labelframe(content, borderwidth=5, relief="ridge", width=1000, height=330, text='Known Spectra')
 #top_frame.grid(column = 2, row =0, columnspan=3, rowspan=8)
 
+  ### frames for additional spectra
+#ir_spec1 = ttk.Labelframe(content, borderwidth=5, relief='ridge', width=170, height=120, text='More')
+#ir_spec1.grid(column=9, row=0, rowspan=3)
+
 ### add image
     ### finds the file path
 def open_image():
