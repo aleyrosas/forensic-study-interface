@@ -66,7 +66,6 @@ def open_image():
 
 ### drawing function!!!!!!!!
 def paint(event):
-    global is_draw_enable
     if is_draw_enable == TRUE:
         python_green = "#476042"
         x1, y1 = (event.x - 1), (event.y - 1)
@@ -74,8 +73,9 @@ def paint(event):
         my_canvas.create_oval(x1, y1, x2, y2, fill=python_green)
 
 def toggle_draw():
+    global is_draw_enable
     is_draw_enable = TRUE
-    paint
+    my_canvas.bind( "<B1-Motion>", paint )
 
 ### for unknown spectra!
 my_canvas = tkinter.Canvas(content, bg='white', height=330, width=1000)
