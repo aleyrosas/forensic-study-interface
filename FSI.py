@@ -26,7 +26,7 @@ is_draw_enable = FALSE
 
 
 
-### ALL FUNCTIONS!
+### ALL FUNCTIONS
 ### opening a file on the top canvas
 def open_topimage():
     global my_image
@@ -78,7 +78,31 @@ def open_bottomimage():
     #my_image_label.grid(column=2, row=0)
     sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
 
-### drawing function!!!!!!!!
+### This function works but it loses resolution and is generally bad...
+def zoom():
+    global my_image
+    global img
+    img = my_image.resize((int(img.width * 2), int(img.height*2)), Image.ANTIALIAS)
+    my_image = ImageTk.PhotoImage(img)
+    my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
+
+# bottom canvas
+def zoom2():
+    global my_secimage
+    global sec_img
+    sec_img = sec_img.resize((int(sec_img.width * 2), int(sec_img.height*2)), Image.ANTIALIAS)
+    my_secimage = ImageTk.PhotoImage(sec_img)
+    sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
+
+### zoom out?
+def zoom_out():
+    global my_image
+    global img
+    img = img.resize((int(img.width / 2), int(img.height/2)), Image.ANTIALIAS)
+    my_image = ImageTk.PhotoImage(img)
+    my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
+
+### drawing function
 def paint(event):
     if is_draw_enable == TRUE:
         python_green = "#476042"
@@ -86,22 +110,37 @@ def paint(event):
         x2, y2 = (event.x + 1), (event.y + 1)
         my_canvas.create_oval(x1, y1, x2, y2, fill=python_green)
 
+### for bottom canvas too
+### drawing function (do we need two drawing features???????????)
+def paint2(event):
+    if is_draw_enable == TRUE:
+        python_green = "#476042"
+        x1, y1 = (event.x - 1), (event.y - 1)
+        x2, y2 = (event.x + 1), (event.y + 1)
+        sec_canvas.create_oval(x1, y1, x2, y2, fill=python_green)
+
 ### turns the drawing feature on and off
 def toggle_draw():
     global is_draw_enable
     if is_draw_enable == FALSE:
         is_draw_enable = TRUE
         my_canvas.bind("<B1-Motion>", paint)
+        sec_canvas.bind("<B1-Motion>", paint)
     else:
         is_draw_enable = FALSE
 
-### This function works but it loses resolution and is generally bad...
-def zoom():
-    global my_image
-    global img
-    img = img.resize((int(img.width * 2), int(img.height*2)), Image.ANTIALIAS)
-    my_image = ImageTk.PhotoImage(img)
-    my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
+### for bottom canvas too
+def toggle_draw2():
+    global is_draw_enable
+    if is_draw_enable == FALSE:
+        is_draw_enable = TRUE
+        sec_canvas.bind("<B1-Motion>", paint2)
+    else:
+        is_draw_enable = FALSE
+
+
+
+
 
 
 
@@ -113,13 +152,33 @@ content.grid(column = 0, row = 0)
 ### figure out how to turn it back on
 draw_button = ttk.Button(content, text = "Draw", command=toggle_draw)
 draw_button.grid(row=3, column=0)
+# for bottom canvas
+draw_button = ttk.Button(content, text = "Draw", command=toggle_draw2)
+draw_button.grid(row=12, column=0)
+
+# zoom for the top canvas
 z_inButton = ttk.Button(content, text="Zoom In", command=zoom)
 z_inButton.grid(row=1, column=0)
-z_outButton = ttk.Button(content, text="Zoom Out")
+z_outButton = ttk.Button(content, text="Zoom Out", command=zoom_out)
 z_outButton.grid(row=2, column=0)
+
+# zoom for the bottom canvas
+z_inButton = ttk.Button(content, text="Zoom In", command=zoom2)
+z_inButton.grid(row=14, column=0)
+z_outButton = ttk.Button(content, text="Zoom Out")
+z_outButton.grid(row=15, column=0)
+
 erase_button = ttk.Button(content, text = 'Erase')
 erase_button.grid(row=4, column=0)
 ### IR table button?
+
+### to add an image into the top canvas :)
+add_image = ttk.Button(content, text='Add Image', command=open_topimage)
+add_image.grid(column=0, row=0)
+
+### adds image to the bottom canvas
+add_image = ttk.Button(content, text='Add Image', command=open_bottomimage)
+add_image.grid(column=0, row=11)
 
 
 
@@ -131,14 +190,6 @@ file = Menu(menubar, tearoff=0)
 file.add_command(label='New')
 file.add_command(label='Save')
 
-
-### to add an image into the top canvas :)
-add_image = ttk.Button(content, text='Add Image', command=open_topimage)
-add_image.grid(column=0, row=0)
-
-### adds image to the bottom canvas
-add_image = ttk.Button(content, text='Add Image', command=open_bottomimage)
-add_image.grid(column=0, row=11)
 
 file.add_command(label='Open', command=open_topimage)
 file.add_command(label='Exit', command=root.quit)
