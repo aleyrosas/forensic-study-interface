@@ -29,11 +29,11 @@ is_draw_enable = FALSE
 ### ALL FUNCTIONS
 ### opening a file on the top canvas
 def open_topimage():
-    global my_image
-    global img
+    global my_image, img, curr_width, curr_height, og_img
     root.filename = fd.askopenfilename(initialdir='c:', title='Select a File', type='*.png')
     ### opens the image
     img = Image.open(root.filename)
+    og_img = Image.open(root.filename)
     ### default scale value...
     resize_ratio = 1
 
@@ -45,7 +45,9 @@ def open_topimage():
             resize_ratio = (img.width/(root.winfo_screenwidth() - 200))
 
     ### resize image...
-    img = img.resize((int(img.width/resize_ratio),int(img.height/resize_ratio)), Image.ANTIALIAS)
+    curr_width = int(img.width/resize_ratio)
+    curr_height = int(img.height/resize_ratio)
+    img = img.resize((curr_width,curr_height), Image.ANTIALIAS)
     my_image = ImageTk.PhotoImage(img)
 
     my_image_label = Label(image=my_image)
@@ -80,9 +82,10 @@ def open_bottomimage():
 
 ### This function works but it loses resolution and is generally bad...
 def zoom():
-    global my_image
-    global img
-    img = my_image.resize((int(img.width * 2), int(img.height*2)), Image.ANTIALIAS)
+    global my_image, img, curr_width, curr_height, og_img
+    curr_width = curr_width*2
+    curr_height = curr_height*2
+    img = og_img.resize((int(curr_width), int(curr_height)), Image.ANTIALIAS)
     my_image = ImageTk.PhotoImage(img)
     my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
 
@@ -96,9 +99,10 @@ def zoom2():
 
 ### zoom out?
 def zoom_out():
-    global my_image
-    global img
-    img = img.resize((int(img.width / 2), int(img.height/2)), Image.ANTIALIAS)
+    global my_image, img, curr_width, curr_height, og_img
+    curr_width = curr_width/2
+    curr_height = curr_height/2
+    img = og_img.resize((int(curr_width), int(curr_height)), Image.ANTIALIAS)
     my_image = ImageTk.PhotoImage(img)
     my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
 
