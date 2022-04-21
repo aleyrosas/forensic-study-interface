@@ -50,20 +50,8 @@ my_image_label.grid(column=2, row=0)
 
 known_canvas.create_image(my_image, fillcolor)
 
-#unknown_canvas = tkinter.Canvas(root, bg='white', height=330, width=1000, name='known spectra')
-#unknown_canvas.grid(column=2, row=8, columnspan=3, rowspan=8)
 
 
-    ### frames where I want the IR images to go
-#top_frame = ttk.Labelframe(content, borderwidth=5, relief="ridge", width=1000, height=330, text='Known Spectra')
-#top_frame.grid(column = 2, row =0, columnspan=3, rowspan=8)
-
-#bottom_frame = ttk.Labelframe(content, borderwidth=5, relief="ridge", width=1000, height=330, text='Unknown Spectra') #360)
-#bottom_frame.grid(column = 2, row=8, columnspan=3, rowspan=8)
-
-    ### frames for additional spectra
-#ir_spec1 = ttk.Labelframe(content, borderwidth=5, relief='ridge', width=170, height=120, text='More')
-#ir_spec1.grid(column=9, row=0, rowspan=3)
 
 ### creating a menu? 
 menubar = Menu(root, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
