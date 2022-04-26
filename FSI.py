@@ -7,7 +7,9 @@ import tkinter
 from turtle import bgcolor
 from PIL import ImageTk, Image
 from tkinter import filedialog as fd
+import os
 
+print(os.path)
 ### creates the program
 root = Tk()  ### naming the variable and creates a Tk class
 root.title('Eye-tracking Study Interface')
@@ -19,8 +21,6 @@ h = screen_height
 screen_width = root.winfo_screenwidth()
 w = screen_width
 #print(screen_width)
-x=(w-200)/2
-y=(330)/2
 
 
 ### makes this full screen
@@ -52,8 +52,8 @@ def IR_MS_open():
         resize_ratio = 1
 
         ### image dimenisions check for scaling...
-        if img.height > (330):
-            resize_ratio = (img.height/(330))
+        if img.height > (root.winfo_screenheight()*.46):
+            resize_ratio = (img.height/((root.winfo_screenheight()*.46)))
         else:
             if img.width > (root.winfo_screenwidth() - 200):
                 resize_ratio = (img.width/(root.winfo_screenwidth() - 200))
@@ -67,7 +67,7 @@ def IR_MS_open():
         my_image_label = Label(image=my_image)
         #my_image_label.grid(column=2, row=0)
         ### create image at center of canvas...
-        image1 = my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
+        image1 = my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int((root.winfo_screenheight()*.46)/2), image=my_image)
 
     ### adds image to the bottom canvas
     def open_bottomimage():
@@ -80,8 +80,8 @@ def IR_MS_open():
         resize_ratio = 1
 
         ### image dimenisions check for scaling...
-        if sec_img.height > (330):
-            resize_ratio = (sec_img.height/(330))
+        if sec_img.height > (root.winfo_screenheight()*.46):
+            resize_ratio = (sec_img.height/(root.winfo_screenheight()*.46))
         else:
             if sec_img.width > (root.winfo_screenwidth() - 200):
                 resize_ratio = (sec_img.width/(root.winfo_screenwidth() - 200))
@@ -94,7 +94,7 @@ def IR_MS_open():
 
         my_secimage_label = Label(image=my_secimage)
         #my_image_label.grid(column=2, row=0)
-        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
+        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(((root.winfo_screenheight()*.46))/2), image=my_secimage)
 
     ### This function works but it loses resolution and is generally bad...
     def zoom():
@@ -186,10 +186,24 @@ def IR_MS_open():
     def open_IR():
         IR_root = Tk()  ### naming the variable and creates a Tk class
         IR_root.title('IR Table')
-        IR_canvas = Canvas(IR_root)
-        IR_img = PhotoImage(file="IRtable.jpg")
-        IR_canvas.create_image(image=IR_img)
+        IR_canvas = Canvas(IR_root, height = 600, width = 800, background='White')
+        IR_canvas.pack()
+        IR_img = PhotoImage("IRtable.png")
+        IR_image = Label(image=IR_img)
+        IR_canvas.create_image(IR_img)
+        IR_canvas.pack(IR_img)
         IR_root.mainloop()
+
+        #root.filename = fd.askopenfilename(initialdir='c:', title='Select a File', type='*.png')
+        ### opens the image
+        #sec_img = Image.open(root.filename)
+        #ogsec_img = Image.open(root.filename)
+        ### default scale value...
+        #resize_ratio = 1
+
+        #my_secimage_label = Label(image=my_secimage)
+        #my_image_label.grid(column=2, row=0)
+        #sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
 
 
 
@@ -268,11 +282,11 @@ def IR_MS_open():
 
     ### CANVASES
     ### for unknown spectra!
-    my_canvas = tkinter.Canvas(content, height=330, width=(root.winfo_screenwidth() - 200))
+    my_canvas = tkinter.Canvas(content, height=((root.winfo_screenheight()*.46)), width=(root.winfo_screenwidth() - 200))
     my_canvas.grid(column=2, row=0, columnspan=3, rowspan=10)
 
     ### for known spectra!
-    sec_canvas = tkinter.Canvas(content, height=330, width=(root.winfo_screenwidth() - 200))
+    sec_canvas = tkinter.Canvas(content, height=((root.winfo_screenheight()*.46)), width=(root.winfo_screenwidth() - 200))
     sec_canvas.grid(column=2, row=11, columnspan=3, rowspan=10)
 
 
@@ -295,11 +309,11 @@ def fingerprint_open():
         resize_ratio = 1
 
         ### image dimenisions check for scaling...
-        if img.height > (640):
-            resize_ratio = (img.height/(640))
+        if img.height > ((root.winfo_screenheight()*.85)):
+            resize_ratio = (img.height/(root.winfo_screenheight()*.85))
         else:
-            if img.width > (600):
-                resize_ratio = (img.width/(600))
+            if img.width > ((root.winfo_screenwidth()-200)/2):
+                resize_ratio = (img.width/((root.winfo_screenwidth()-200)/2))
 
         ### resize image...
         curr_width = int(img.width/resize_ratio)
@@ -309,7 +323,7 @@ def fingerprint_open():
 
         my_image_label = Label(image=my_image)
         ### create image at center of canvas...
-        image1 = my_canvas.create_image((600/2),(640/2), image=my_image)
+        image1 = my_canvas.create_image(int(((root.winfo_screenwidth()-200)/2)/2),int(((root.winfo_screenheight()*.85)/2)), image=my_image)
 
     ### adds image to the bottom canvas
     def open_bottomimage():
@@ -322,11 +336,11 @@ def fingerprint_open():
         resize_ratio = 1
 
         ### image dimenisions check for scaling...
-        if sec_img.height > (330):
-            resize_ratio = (sec_img.height/(330))
+        if sec_img.height > ((root.winfo_screenheight()*.85)):
+            resize_ratio = (sec_img.height/(root.winfo_screenheight()*.85))
         else:
-            if sec_img.width > (root.winfo_screenwidth() - 200):
-                resize_ratio = (sec_img.width/(root.winfo_screenwidth() - 200))
+            if sec_img.width > ((root.winfo_screenwidth()-200)/2):
+                resize_ratio = (sec_img.width/((root.winfo_screenwidth()-200)/2))
 
         ### resize image...
         curr_width2 = int(sec_img.width/resize_ratio)
@@ -336,7 +350,7 @@ def fingerprint_open():
 
         my_secimage_label = Label(image=my_secimage)
         #my_image_label.grid(column=2, row=0)
-        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
+        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)/2),int((root.winfo_screenheight()*.85)/2), image=my_secimage)
 
     ### This function works but it loses resolution and is generally bad...
     def zoom():
@@ -345,7 +359,7 @@ def fingerprint_open():
         curr_height = curr_height*2
         img = og_img.resize((int(curr_width), int(curr_height)), Image.ANTIALIAS)
         my_image = ImageTk.PhotoImage(img)
-        my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
+        my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)/2),int((root.winfo_screenheight()*.85)/2), image=my_image)
 
     # bottom canvas
     def zoom2():
@@ -354,7 +368,7 @@ def fingerprint_open():
         curr_height2 = curr_height2*2
         sec_img = ogsec_img.resize((int(curr_width2), int(curr_height2)), Image.ANTIALIAS)
         my_secimage = ImageTk.PhotoImage(sec_img)
-        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
+        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)/2),int((root.winfo_screenheight()*.85)/2), image=my_secimage)
 
     ### zoom out?
     def zoom_out():
@@ -363,7 +377,7 @@ def fingerprint_open():
         curr_height = curr_height/2
         img = og_img.resize((int(curr_width), int(curr_height)), Image.ANTIALIAS)
         my_image = ImageTk.PhotoImage(img)
-        my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_image)
+        my_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)/2),int((root.winfo_screenheight()*.85)/2), image=my_image)
 
     def zoom_out2():
         global my_secimage, sec_img, curr_width2, curr_height2, ogsec_img
@@ -371,7 +385,7 @@ def fingerprint_open():
         curr_height2 = curr_height2/2
         sec_img = ogsec_img.resize((int(curr_width2), int(curr_height2)), Image.ANTIALIAS)
         my_secimage = ImageTk.PhotoImage(sec_img)
-        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
+        sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)/2),int((root.winfo_screenheight()*.85)/2), image=my_secimage)
 
     ### drawing function
     def paint(event):
@@ -424,18 +438,10 @@ def fingerprint_open():
         else:
             is_erase_enable = FALSE
 
-    ### IR table
-    def open_IR():
-        IR_root = Tk()  ### naming the variable and creates a Tk class
-        IR_root.title('IR Table')
-        IR_canvas = Canvas(IR_root)
-        IR_img = PhotoImage(file="IRtable.jpg")
-        IR_canvas.create_image(image=IR_img)
-        IR_root.mainloop()
 
 
 
-    def left(event):
+    def left(event1):
         global image1
         x = -20
         y = 0
@@ -458,11 +464,17 @@ def fingerprint_open():
         my_canvas.move(image1, x, y)
 
 
+    # Define a function to allow the image to move within the canvas
+    def move(event):
+        global image1
+        down
+        up
+        left
+        right
+        image1 = my_canvas.create_image(event.x, event.y, image=my_image)
+        
     # Bind the move function
-    content.bind("<Left>", left)
-    content.bind("<Right>", right)
-    content.bind("<Up>", up)
-    content.bind("<Down>", down)
+        my_canvas.bind("<B1-Motion>", move)
 
 
 
@@ -507,11 +519,11 @@ def fingerprint_open():
 
     ### CANVASES
     ### for unknown spectra!
-    my_canvas = tkinter.Canvas(content, background='white', height=640, width=600)
+    my_canvas = tkinter.Canvas(content, background='white', height=int((root.winfo_screenheight()*.85)), width=int(((root.winfo_screenwidth() - 200)/2)))
     my_canvas.grid(column=1, row=0, columnspan=4, rowspan=10)
 
     ### for known spectra!
-    sec_canvas = tkinter.Canvas(content, background='white',height=640, width=600)
+    sec_canvas = tkinter.Canvas(content, background='white',height=int((root.winfo_screenheight()*.85)), width=int(((root.winfo_screenwidth() - 200)/2)))
     sec_canvas.grid(column=6, row=0, columnspan=4, rowspan=10)
 
 
@@ -525,7 +537,6 @@ sub_menu.add_command(label='IR/MS', command=IR_MS_open)
 sub_menu.add_command(label='Fingerprints', command=fingerprint_open)
 
 file.add_cascade(label='New', menu=sub_menu)
-file.add_command(label='Save')
 
 
 file.add_command(label='Open')
