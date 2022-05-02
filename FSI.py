@@ -1,6 +1,7 @@
 from ctypes import resize
 from email.mime import image
 from fileinput import filename
+from msilib.schema import Directory
 from tkinter import *
 from tkinter import ttk
 import tkinter
@@ -8,6 +9,7 @@ from turtle import bgcolor
 from PIL import ImageTk, Image
 from tkinter import filedialog as fd
 import os
+import turtle
 
 print(os.path)
 ### creates the program
@@ -35,6 +37,24 @@ is_erase_enable = FALSE
 ### widgets!
 content = ttk.Frame(root)
 content.grid(column = 0, row = 0)
+
+#global init_images
+
+### for the o,age changes
+stack_list = []
+
+def load_init():
+    dir = "init"
+    photo_array = []
+    for image_name in os.listdir(dir):
+        myfile = os.path.join(dir, image_name)
+        if os.path.isfile(myfile):
+            print(myfile)
+            img = Image.open(myfile).resize((100,100), Image.ANTIALIAS)
+            photo = ImageTk.PhotoImage(img)
+            photo_array.append(photo)
+    print(photo_array)
+    return photo_array
 
 
 
@@ -86,14 +106,13 @@ def IR_MS_open():
             if sec_img.width > (root.winfo_screenwidth() - 200):
                 resize_ratio = (sec_img.width/(root.winfo_screenwidth() - 200))
 
-        ### resize image...
+        ### resizing the images
         curr_width2 = int(sec_img.width/resize_ratio)
         curr_height2 = int(sec_img.height/resize_ratio)
         sec_img = sec_img.resize((curr_width2, curr_height2), Image.ANTIALIAS)
         my_secimage = ImageTk.PhotoImage(sec_img)
 
         my_secimage_label = Label(image=my_secimage)
-        #my_image_label.grid(column=2, row=0)
         sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(((root.winfo_screenheight()*.46))/2), image=my_secimage)
 
     ### This function works but it loses resolution and is generally bad...
@@ -141,7 +160,7 @@ def IR_MS_open():
             drawing = my_canvas.create_oval(x1, y1, x2, y2, fill=python_green)
 
     ### for bottom canvas too
-    ### drawing function (do we need two drawing features???????????)
+    ### drawing function
     def paint2(event):
         if is_draw_enable == TRUE:
             python_green = "#476042"
@@ -184,57 +203,28 @@ def IR_MS_open():
 
     ### IR table
     def open_IR():
-        IR_root = Tk()  ### naming the variable and creates a Tk class
+        IR_root = Toplevel()  ### naming the variable and creates a Tk class
         IR_root.title('IR Table')
-        IR_canvas = Canvas(IR_root, height = 600, width = 800, background='White')
+        IR_canvas = Canvas(IR_root, height = 400, width = 600, background='White')
         IR_canvas.pack()
-        IR_img = PhotoImage("IRtable.png")
-        IR_image = Label(image=IR_img)
-        IR_canvas.create_image(IR_img)
-        IR_canvas.pack(IR_img)
+        IR_img = tkinter.PhotoImage(file="IRtable.png")
+        IR_label = Label(image=IR_img)
+        IR_canvas.create_image(300, 200, image=IR_img)
         IR_root.mainloop()
-
-        #root.filename = fd.askopenfilename(initialdir='c:', title='Select a File', type='*.png')
-        ### opens the image
-        #sec_img = Image.open(root.filename)
-        #ogsec_img = Image.open(root.filename)
-        ### default scale value...
-        #resize_ratio = 1
-
-        #my_secimage_label = Label(image=my_secimage)
-        #my_image_label.grid(column=2, row=0)
-        #sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)),int(330/2), image=my_secimage)
-
-
-
-    def left(event):
-        global image1
-        x = -20
-        y = 0
-        my_canvas.move(image1, x, y)
-
-    def right(event):
-        global image1
-        x = 20
-        y = 0
-        my_canvas.move(image1, x, y)
-
-    def up(event):
-        x = 0
-        y = -20
-        my_canvas.move(image1, x, y)
-
-    def down(event):
-        x = 0
-        y = 20
-        my_canvas.move(image1, x, y)
+    
+    ### MS table with losses
+    def open_MS():
+        MS_root = Toplevel()  ### naming the variable and creates a Tk class
+        MS_root.title('Logical MS Losses')
+        MS_canvas = Canvas(MS_root, height = 400, width = 600, background='White')
+        MS_canvas.pack()
+        MS_img = tkinter.PhotoImage(file="MSloses.png")
+        MS_label = Label(image=MS_img)
+        MS_canvas.create_image(300, 200, image=MS_img)
+        MS_root.mainloop()
 
 
-    # Bind the move function
-    content.bind("<Left>", left)
-    content.bind("<Right>", right)
-    content.bind("<Up>", up)
-    content.bind("<Down>", down)
+
 
 
 
@@ -251,6 +241,9 @@ def IR_MS_open():
     IR_button = ttk.Button(content, text = 'IR Table', command=open_IR)
     IR_button.grid(row=16, column=0)
 
+    MS_button = ttk.Button(content, text = 'MS Losses', command=open_MS)
+    MS_button.grid(row=17, column=0)
+
     # zoom for the top canvas
     z_inButton = ttk.Button(content, text="Zoom In", command=zoom)
     z_inButton.grid(row=1, column=0)
@@ -263,15 +256,6 @@ def IR_MS_open():
     z_outButton = ttk.Button(content, text="Zoom Out", command=zoom_out2)
     z_outButton.grid(row=13, column=0)
 
-    # erase for top canvas
-    erase_button = ttk.Button(content, text = 'Erase', command=toggle_erase)
-    erase_button.grid(row=4, column=0)
-
-    # erase for bottom canvas
-    erase_button = ttk.Button(content, text = 'Erase')
-    erase_button.grid(row=15, column=0)
-    ### IR table button?
-
     ### to add an image into the top canvas :)
     add_image = ttk.Button(content, text='Add Image', command=open_topimage)
     add_image.grid(column=0, row=0)
@@ -280,13 +264,26 @@ def IR_MS_open():
     add_image = ttk.Button(content, text='Add Image', command=open_bottomimage)
     add_image.grid(column=0, row=11)
 
+
+
+    stack_list.append()
+
+
+    ### buttons for other images in directory
+    #global init_images
+    #init_images = load_init()
+    #for i in range(len(init_images)):
+     #   print(init_images)
+      #  btn = ttk.Button(content, text="ree", image=init_images[i])
+       # btn.grid(column=6, row=1+i)
+
     ### CANVASES
     ### for unknown spectra!
-    my_canvas = tkinter.Canvas(content, height=((root.winfo_screenheight()*.46)), width=(root.winfo_screenwidth() - 200))
+    my_canvas = tkinter.Canvas(content, height=((root.winfo_screenheight()*.46)), width=(root.winfo_screenwidth() - 200), background = 'White')
     my_canvas.grid(column=2, row=0, columnspan=3, rowspan=10)
 
     ### for known spectra!
-    sec_canvas = tkinter.Canvas(content, height=((root.winfo_screenheight()*.46)), width=(root.winfo_screenwidth() - 200))
+    sec_canvas = tkinter.Canvas(content, height=((root.winfo_screenheight()*.46)), width=(root.winfo_screenwidth() - 200), background = 'White')
     sec_canvas.grid(column=2, row=11, columnspan=3, rowspan=10)
 
 
@@ -297,6 +294,24 @@ def IR_MS_open():
 
 ### opening fingerprint layout
 def fingerprint_open():
+
+
+
+### CANVASES
+    ### for unknown spectra!
+    my_canvas = tkinter.Canvas(content, background='white', height=int((root.winfo_screenheight()*.85)), width=int(((root.winfo_screenwidth() - 200)/2)))
+    my_canvas.grid(column=1, row=0, columnspan=4, rowspan=10)
+    x = (root.winfo_screenwidth() - 200)/2
+    y = root.winfo_screenheight()*.85
+
+    ### for known spectra!
+    sec_canvas = tkinter.Canvas(content, background='white',height=int((root.winfo_screenheight()*.85)), width=int(((root.winfo_screenwidth() - 200)/2)))
+    sec_canvas.grid(column=6, row=0, columnspan=4, rowspan=10)
+
+
+
+
+
     ### ALL FUNCTIONS
     ### opening a file on the top canvas
     def open_leftimage():
@@ -323,7 +338,7 @@ def fingerprint_open():
 
         my_image_label = Label(image=my_image)
         ### create image at center of canvas...
-        image1 = my_canvas.create_image(int(((root.winfo_screenwidth()-200)/2)/2),int(((root.winfo_screenheight()*.85)/2)), image=my_image)
+        image1 = my_canvas.create_image(int(((root.winfo_screenwidth()-200)/2)/2),int(((root.winfo_screenheight()*.85)/2)), image=my_image, tags='image')
 
     ### adds image to the bottom canvas
     def open_bottomimage():
@@ -387,42 +402,60 @@ def fingerprint_open():
         my_secimage = ImageTk.PhotoImage(sec_img)
         sec_canvas.create_image(int(((root.winfo_screenwidth() - 200)/2)/2),int((root.winfo_screenheight()*.85)/2), image=my_secimage)
 
+    ### used to get the coordinates for the draw func
+    def get_x_and_y(event):
+        global lasx, lasy
+        lasx = event.x
+        lasy = event.y
+
     ### drawing function
     def paint(event):
-        global drawing
+        global drawing, lasx, lasy
         if is_draw_enable == TRUE:
-            python_green = "#476042"
-            x1, y1 = (event.x - 1), (event.y - 1)
-            x2, y2 = (event.x + 1), (event.y + 1)
-            drawing = my_canvas.create_oval(x1, y1, x2, y2, fill=python_green)
+            ### used to create a solid drawing line
+            drawing = my_canvas.create_line(lasx, lasy, event.x, event.y, fill='Red', tags='drawing')
+            ### assigning new event coordinates to the last ones
+            lasx, lasy = event.x, event.y
+
 
     ### for bottom canvas too
     ### drawing function (do we need two drawing features???????????)
     def paint2(event):
+        global drawing, lasx, lasy
         if is_draw_enable == TRUE:
-            python_green = "#476042"
-            x1, y1 = (event.x - 1), (event.y - 1)
-            x2, y2 = (event.x + 1), (event.y + 1)
-            sec_canvas.create_oval(x1, y1, x2, y2, fill=python_green)
+            ### used to create a solid drawing line
+            drawing = sec_canvas.create_line(lasx, lasy, event.x, event.y, fill='Red')
+            ### assigning new event coordinates to the last ones
+            lasx, lasy = event.x, event.y
+
 
     ### turns the drawing feature on and off
     def toggle_draw():
         global is_draw_enable
         if is_draw_enable == FALSE:
             is_draw_enable = TRUE
-            my_canvas.bind("<B1-Motion>", paint)
-            sec_canvas.bind("<B1-Motion>", paint)
+            ### binds the mouse button movement to getting the coordinates
+            my_canvas.bind('<Button-1>', get_x_and_y)
+            ### binds the mouse movement to the line drawing
+            my_canvas.bind('<B1-Motion>', paint)
         else:
             is_draw_enable = FALSE
+            ### gives the mouse back to the move func
+            my_canvas.bind('<B1-Motion>', move)
 
     ### for bottom canvas too
     def toggle_draw2():
         global is_draw_enable
         if is_draw_enable == FALSE:
             is_draw_enable = TRUE
-            sec_canvas.bind("<B1-Motion>", paint2)
+            ### binds the mouse button movement to getting the coordinates
+            sec_canvas.bind('<Button-1>', get_x_and_y)
+            ### binds the mouse movement to the line drawing
+            sec_canvas.bind('<B1-Motion>', paint2)
         else:
             is_draw_enable = FALSE
+            ### gives the mouse back to the move func
+            my_canvas.bind('<B1-Motion>', move2)
 
     ### erase feature
     def erase():
@@ -439,42 +472,28 @@ def fingerprint_open():
             is_erase_enable = FALSE
 
 
-
-
-    def left(event1):
-        global image1
-        x = -20
-        y = 0
-        my_canvas.move(image1, x, y)
-
-    def right(event):
-        global image1
-        x = 20
-        y = 0
-        my_canvas.move(image1, x, y)
-
-    def up(event):
-        x = 0
-        y = -20
-        my_canvas.move(image1, x, y)
-
-    def down(event):
-        x = 0
-        y = 20
-        my_canvas.move(image1, x, y)
-
-
-    # Define a function to allow the image to move within the canvas
+    ### allows the image to move within the canvas
     def move(event):
-        global image1
-        down
-        up
-        left
-        right
-        image1 = my_canvas.create_image(event.x, event.y, image=my_image)
+        global my_image
+        #my_canvas.itemconfig()
+        ### deletes the current image
+        my_canvas.delete('all')
+        ### creates a new image
+        my_canvas.create_image(event.x, event.y, image=my_image)
         
-    # Bind the move function
-        my_canvas.bind("<B1-Motion>", move)
+    ### bind the move function to mouse movement
+    my_canvas.bind('<B1-Motion>', move)
+
+    ### for the second canvas :)
+    def move2(event):
+        global image1
+        ### deletes the current image on canvas
+        sec_canvas.delete('all')
+        ### creates a new image where you moved
+        sec_canvas.create_image(event.x, event.y, image=image1)
+
+    ### bind the move function to the mouse movement
+    sec_canvas.bind('<B1-Motion>', move2)
 
 
 
@@ -482,7 +501,7 @@ def fingerprint_open():
         ### editing options buttons and their positions
     ### figure out how to turn it back on
     draw_button = ttk.Button(content, text = "Draw", command=toggle_draw)
-    draw_button.grid(row=10, column=1)
+    draw_button.grid(row=10, column=11)
 
     # for bottom canvas
     draw_button = ttk.Button(content, text = "Draw", command=toggle_draw2)
@@ -517,14 +536,15 @@ def fingerprint_open():
     add_image = ttk.Button(content, text='Add Image', command=open_bottomimage)
     add_image.grid(column=6, row=10)
 
-    ### CANVASES
-    ### for unknown spectra!
-    my_canvas = tkinter.Canvas(content, background='white', height=int((root.winfo_screenheight()*.85)), width=int(((root.winfo_screenwidth() - 200)/2)))
-    my_canvas.grid(column=1, row=0, columnspan=4, rowspan=10)
 
-    ### for known spectra!
-    sec_canvas = tkinter.Canvas(content, background='white',height=int((root.winfo_screenheight()*.85)), width=int(((root.winfo_screenwidth() - 200)/2)))
-    sec_canvas.grid(column=6, row=0, columnspan=4, rowspan=10)
+    ### images for the other images in directory
+    #global init_images
+    #init_images = load_init()
+    #for i in range(len(init_images)):
+     #   print(init_images)
+      #  btn = ttk.Button(content, text="ree", image=init_images[i])
+       # btn.grid(column=11, row=1+i)
+
 
 
 ### creating a menu
@@ -543,16 +563,6 @@ file.add_command(label='Open')
 file.add_command(label='Exit', command=root.quit)
 menubar.add_cascade(label='File', menu=file)
 
-### edit menu options
-edit = Menu(menubar, tearoff=0)
-edit.add_command(label='Insert')
-edit.add_command(label='Reorganize')
-edit.add_command(label='Layout')
-menubar.add_cascade(label='Edit', menu=edit)
-
-### presentation option
-present = Menu(menubar, tearoff=0)
-menubar.add_cascade(label='Present', menu=present)
 
 root.config(menu=menubar)
 
